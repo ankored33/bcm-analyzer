@@ -2,17 +2,22 @@ require 'sinatra'
 require 'sinatra/reloader' if development?
 require 'nokogiri'
 require 'open-uri'
+require "json"
+
+=begin
+ruby main.rb -p $PORT -o $IP
+export MECAB_PATH=/usr/lib/libmecab.so.2
+=end
 
 get "/" do
   erb :index
 end
 
-
-user = "inmysoul"
-param = 0
-c = 0
-cc = 0
-@comments = Array.new
+post "/post" do
+  
+  user = params[:user_name]
+  param = 0
+  comments = Array.new
 
 key_gojo = [
   "参考",
@@ -20,21 +25,27 @@ key_gojo = [
   ]
   
 key_nega = [
+  "噴飯",
   "クズ", "ゴミ", "カス",
+  "売名",
+  "キチガイ", "基地外",
   "ハゲ",
   "つまら", "つまん",
   "氏ね", "死ね",
   "最悪",
   "メンヘラ",
-  "嫌い",
+  "嫌い", "むかつく", "ムカつく",
   "ふざけるな", "ふざけんな",
   "最高にアホ",
   "やりなおし", "やり直し",
   "無能",
   "失笑",
-  "ださい","ダサい",
+  "ダサい", "だせえ", "ダセえ",
   "ジャップ","土人", "乞食",
-  "頭悪",
+  "頭悪", "頭が悪",
+  "可哀想","かわいそう",
+  "老害","連中",
+  "お前が言うな", "おまいう"
   ]
 
 key_n_top = [
@@ -44,24 +55,30 @@ key_n_top = [
 key_posi = [
   "いい意味で",
   "ワロタ", "ワラタ", "笑った", "わらた", "わろた", "笑う",
-  "楽しい", "楽しか", "楽しみ", "たのしみ",
+  "楽しい", "楽しか", "楽しみ", "たのしみ", "たのしそ", "楽しそ",
   "すごい", "凄い", "すごか", "凄か",
-  "おいしい", "美味しい",
-  "面白い", "面白か", "おもしろい", "おもしろか", "面白そ", "おもしろそ",
+  "おいしい", "美味しい", "うまい", "上手い",
+  "面白い", "面白か", "おもしろい", "おもしろか", "面白そ", "おもしろそ","面白す", "おもしろす",
   "うける", "ウケる",
-  "良エントリ", "いいエントリ", "いいな", "良いな", "いい話", "良いね",
+  "良エントリ", "良記事", "いいエントリ","良いエントリ", "いいな", "良いな", "良い話", "いい話", "良いね",
   "最高",
   "なるほど", "納得。",
-  "好き",
-  "称賛したい", "賞賛したい",
-  "がんばれ", "がんばった", "頑張れ", "頑張った"
+  "好き。", "好き　","好きす",
+  "称賛し", "賞賛し",
+  "がんばれ", "がんばった", "頑張れ", "頑張った",
+  "ありがとう", "ありがたい",
+  "気持ちのいい",
+  "革新的",
+  "センスいい","センスがいい","ハイセンス","センスある",
   ]
+  c =0 
+  cc = 0
 
 opt = {}
 opt['User-Agent'] = 'Opera/9.80 (Windows NT 5.1; U; ja) Presto/2.7.62 Version/11.01 ' #User-Agent偽装
 charset = nil
 
-while cc <= 100 do
+  while param < 40 do
   url = "http://b.hatena.ne.jp/#{user}/atomfeed?of=#{param}"
   atom = open(url,opt) do |f|
     charset = f.charset #文字種別を取得
@@ -71,29 +88,35 @@ while cc <= 100 do
   doc.remove_namespaces!
 
   doc.xpath('//entry').each {|e|
-    comment = e.xpath('summary').inner_text
+    cmt = e.xpath('summary').inner_text
     c += 1
-    next if comment == ""
+    next if cmt == ""
     cc += 1
-    break if cc > 100
     posi_p = 0
     gojo_p = 0
     key_n_top.each {|key|
-      posi_p -= 1 if comment.include?(key) == true
+      posi_p -= 1 if cmt.include?(key) == true
     }
     key_posi.each {|key|
-      posi_p += 2 if comment.include?(key) == true
+      posi_p += 2 if cmt.include?(key) == true
     }
     key_nega.each {|key|
-      posi_p -= 3 if comment.include?(key) == true
+      posi_p -= 3 if cmt.include?(key) == true
     }
     key_posi.each {|key|
-      gojo_p += 1 if comment.include?(key) == true
+      gojo_p += 1 if cmt.include?(key) == true
     }
-  @comments << "#{comment} #####{posi_p}point"
+    comments << "#{cmt} #####{posi_p}point"
+
   }
   sleep(0.75)
-  param += 20  
+  param += 20
 end
 
-puts @comments
+puts comments
+puts "#{cc} / #{c}"
+
+  content_type :json
+  @data = comments.to_json
+
+end

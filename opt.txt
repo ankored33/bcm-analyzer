@@ -1,0 +1,2 @@
+ruby main.rb -p $PORT -o $IP
+export MECAB_PATH=/usr/lib/libmecab.so.2

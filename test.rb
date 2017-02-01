@@ -1,14 +1,10 @@
-require 'sinatra'
-require 'natto'
 require 'nokogiri'
 require 'open-uri'
 
-get "/" do
-  erb :index
-end
 
 
-user = "inmysoul"
+
+user = "FUKAMACHI"
 param = 0
 c = 0
 cc = 0
@@ -34,7 +30,8 @@ key_nega = [
   "失笑",
   "ださい","ダサい",
   "ジャップ","土人", "乞食",
-  "頭悪",
+  "頭悪", "頭が悪",
+  "可哀想","かわいそう"
   ]
 
 key_n_top = [
@@ -46,7 +43,7 @@ key_posi = [
   "ワロタ", "ワラタ", "笑った", "わらた", "わろた", "笑う",
   "楽しい", "楽しか", "楽しみ", "たのしみ",
   "すごい", "凄い", "すごか", "凄か",
-  "おいしい", "美味しい",
+  "おいしい", "美味しい", "うまい", "上手い",
   "面白い", "面白か", "おもしろい", "おもしろか", "面白そ", "おもしろそ",
   "うける", "ウケる",
   "良エントリ", "いいエントリ", "いいな", "良いな", "いい話", "良いね",
@@ -75,7 +72,7 @@ while cc <= 100 do
     c += 1
     next if comment == ""
     cc += 1
-    break if cc > 100
+    break if cc > 99
     posi_p = 0
     gojo_p = 0
     key_n_top.each {|key|
@@ -90,10 +87,12 @@ while cc <= 100 do
     key_posi.each {|key|
       gojo_p += 1 if comment.include?(key) == true
     }
-  @comments << "#{comment} #####{posi_p}point"
+    @comments << "#{comment} #####{posi_p}point"
+
   }
   sleep(0.75)
   param += 20  
 end
 
 puts @comments
+puts "#{cc} / #{c}"

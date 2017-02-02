@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="description" content="">
-  <title>ブクマカアナライザー</title>  
+  <title>ブコメアナライザ（仮）</title>  
   <link href="css.css" rel="stylesheet" type="text/css">
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> 
-  <script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <script src="Chart.js"></script>
   <script type="text/javascript" src="https://code.createjs.com/soundjs-0.6.1.min.js"></script>
   <script type="text/javascript" src="main.js"></script>
 </head>
@@ -17,12 +17,19 @@
     <h1>title</h1>
   </div>
   <div id =input_area>
-    <input type="text" id="input" /> <input type="submit" id="submit" />
+    <input type="text" id="input" onclick="this.select();"><input type="submit" id="submit" VALUE="ANALYZE!">
   </div>
   <div id="result">
-  
-  </div>
 
+  </div>
+<div id="test">
+  <canvas id="sample"></canvas>
+</div>
+<script>
+
+
+
+</script>
   <div id="footer">
   </div>
 </div>

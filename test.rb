@@ -1,21 +1,9 @@
-require 'sinatra'
-require 'sinatra/reloader' if development?
 require 'nokogiri'
 require 'open-uri'
 require "json"
 
-=begin
-ruby main.rb -p $PORT -o $IP
-export MECAB_PATH=/usr/lib/libmecab.so.2
-=end
 
-get "/" do
-  erb :index
-end
-
-post "/post" do
-  
-user = params[:hatena_id]
+user = "barbieri"
 param = 0
 comments = Array.new
 c = 0
@@ -77,7 +65,7 @@ opt = {}
 opt['User-Agent'] = 'Opera/9.80 (Windows NT 5.1; U; ja) Presto/2.7.62 Version/11.01 ' #User-Agent偽装
 charset = nil
 
-while param < 200 do
+while param < 40 do
   url = "http://b.hatena.ne.jp/#{user}/atomfeed?of=#{param}"
   atom = open(url,opt) do |f|
     charset = f.charset #文字種別を取得
@@ -89,8 +77,7 @@ while param < 200 do
   doc.xpath('//entry').each {|e|
     cmt = e.xpath('summary').inner_text
     tag = e.xpath('subject').inner_text
-    ent = e.xpath('link')[0][:href]
-    
+    entry = e.xpath('link')[0][:href]
     sile += 1 if cmt == ""
     c += 1
     feel = 0
@@ -113,14 +100,9 @@ while param < 200 do
       val = "neutral"
       neut += 1
     end
-    comments << [cmt,val,tag,ent]
+    comments << [cmt,val,tag]
   } 
   sleep(0.75)
   param += 20
-  puts "#{param}件取得"
 end
   comments << [c, sile, posi, nega, neut]
-  content_type :json
-  @data = comments.to_json
-
-end

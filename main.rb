@@ -77,7 +77,7 @@ opt = {}
 opt['User-Agent'] = 'Opera/9.80 (Windows NT 5.1; U; ja) Presto/2.7.62 Version/11.01 ' #User-Agent偽装
 charset = nil
 
-while param < 200 do
+while param < 20 do
   url = "http://b.hatena.ne.jp/#{user}/atomfeed?of=#{param}"
   atom = open(url,opt) do |f|
     charset = f.charset #文字種別を取得
@@ -90,7 +90,8 @@ while param < 200 do
     cmt = e.xpath('summary').inner_text
     tag = e.xpath('subject').inner_text
     ent = e.xpath('link')[0][:href]
-    
+    dom = ent[/https?:\/\/.+?\//]
+    p dom  
     sile += 1 if cmt == ""
     c += 1
     feel = 0

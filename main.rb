@@ -90,6 +90,8 @@ while param < 100 do
     cmt = e.xpath('summary').inner_text
     tag = e.xpath('subject').inner_text
     ent = e.xpath('link')[0][:href]
+    iss = e.xpath('issued').inner_text[/.+?:../].gsub(/[-T:]/,"")
+    p iss
     dom = ent[/https?:\/\/.+?\//]
     arr << dom
     sile += 1 if cmt == ""

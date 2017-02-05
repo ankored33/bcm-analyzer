@@ -5,6 +5,7 @@ $(function(){
   $('#input_area').on('click', '#submit', function(){
     var hatenaId = $('#input').val();
     var graphSource = [0,0,0,0,0];
+    var source
     console.log(hatenaId);
     $('#result').text('解析中');
     $.ajax({
@@ -18,14 +19,18 @@ $(function(){
       dataType: "json",
         $(function(){
           window.scrollTo( 0, 0 ) ;
-          var source = JSON.parse(json);
-          graphSource = source[source.length - 1]
-          $('#result').text(source.length-1 + '件のブクマ');
+          source = JSON.parse(json);
+          graphSource = source[source.length - 2];
+          var favorite = source[source.length - 1];
+          console.log(favorite);
+          $('#result').text(source.length-2 + '件のブクマ');
           graphA(graphSource);
+          favoriteList(favorite);
         });
       },
       error: function() {
         $('#result').text('error');
+        
       }
       });
   });
@@ -35,10 +40,13 @@ $(function(){
 
 
 function graphA (graphSource){
-  
-var data = {
+var ctx
+var myChart
+var data
+
+data = {
     labels: [
-        "無言ブクマ",
+        "無言",
         "ポジコメ",
         "ネガコメ",
         "普通のコメント"
@@ -60,10 +68,17 @@ var data = {
             ]
         }]
 };
-var ctx = document.getElementById('sample').getContext('2d');
-var myChart = new Chart(ctx, {
+ctx = document.getElementById('sample').getContext('2d');
+myChart = new Chart(ctx, {
   type: 'pie',
   data: data,
 });
 
+}
+
+
+//よく見るサイト####################################################
+
+function favoriteList (favorite) {
+  $('#favorite_site').text(favorite);
 }

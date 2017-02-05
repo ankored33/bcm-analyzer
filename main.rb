@@ -23,7 +23,7 @@ sile = 0
 posi = 0
 nega = 0
 neut = 0 #ブクマ数,無言コメ,ポジコメ,ネガコメ,ニュートラルコメ
-
+arr = Array.new
 key_nega = [
   "噴飯",
   "クズ", "ゴミ", "カス",
@@ -77,7 +77,7 @@ opt = {}
 opt['User-Agent'] = 'Opera/9.80 (Windows NT 5.1; U; ja) Presto/2.7.62 Version/11.01 ' #User-Agent偽装
 charset = nil
 
-while param < 20 do
+while param < 100 do
   url = "http://b.hatena.ne.jp/#{user}/atomfeed?of=#{param}"
   atom = open(url,opt) do |f|
     charset = f.charset #文字種別を取得
@@ -91,7 +91,7 @@ while param < 20 do
     tag = e.xpath('subject').inner_text
     ent = e.xpath('link')[0][:href]
     dom = ent[/https?:\/\/.+?\//]
-    p dom  
+    arr << dom
     sile += 1 if cmt == ""
     c += 1
     feel = 0
@@ -116,12 +116,25 @@ while param < 20 do
     end
     comments << [cmt,val,tag,ent]
   } 
-  sleep(0.75)
   param += 20
   puts "#{param}件取得"
 end
   comments << [c, sile, posi, nega, neut]
-  content_type :json
-  @data = comments.to_json
+  arr.select! {|v| arr.count(v) > 1 }  
+class Array
+  def count_to_hash
+    k = Hash.new(0)
+    self.each{|x| k[x] += 1 }
+    return k
+  end
+end
+
+items = arr.count_to_hash
+comments << items.sort_by{|key,val| -val}
+
+p comments
+
+content_type :json
+@data = comments.to_json
 
 end

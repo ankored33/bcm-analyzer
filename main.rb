@@ -3,6 +3,7 @@ require 'sinatra/reloader' if development?
 require 'nokogiri'
 require 'open-uri'
 require "json"
+require "natto"
 
 =begin
 ruby main.rb -p $PORT -o $IP
@@ -24,6 +25,8 @@ posi = 0
 nega = 0
 neut = 0 #ブクマ数,無言コメ,ポジコメ,ネガコメ,ニュートラルコメ
 arr = Array.new
+time = Array.new
+ls = Array.new
 key_nega = [
   "噴飯",
   "クズ", "ゴミ", "カス",
@@ -90,10 +93,8 @@ while param < 100 do
     cmt = e.xpath('summary').inner_text
     tag = e.xpath('subject').inner_text
     ent = e.xpath('link')[0][:href]
-    iss = e.xpath('issued').inner_text[/.+?:../].gsub(/[-T:]/,"")
-    p iss
-    dom = ent[/https?:\/\/.+?\//]
-    arr << dom
+
+
     sile += 1 if cmt == ""
     c += 1
     feel = 0
@@ -117,12 +118,31 @@ while param < 100 do
       neut += 1
     end
     comments << [cmt,val,tag,ent]
+    
+    dom = ent[/https?:\/\/.+?\//]
+    arr << dom
+    
+    iss = e.xpath('issued').inner_text[/.+?:../].gsub(/[-T:]/,"")[-4, 2].to_i
+    time << iss 
+
+
+    parsed = Natto::MeCab.new
+      parsed.parse(cmt) do |n|
+        a = n.feature.split(',')[0]
+        b = n.surface
+        next if b == "" || a =="記号" || a =="助詞" || a =="助動詞"|| a =="動詞"
+        ls << b
+        p a + ", " + b
+      end
+
   } 
   param += 20
   puts "#{param}件取得"
 end
-  comments << [c, sile, posi, nega, neut]
-  arr.select! {|v| arr.count(v) > 1 }  
+
+
+
+
 class Array
   def count_to_hash
     k = Hash.new(0)
@@ -131,12 +151,24 @@ class Array
   end
 end
 
+ls.select! {|v| ls.count(v) > 1 }
+words = ls.count_to_hash
+comments <<  words.sort_by{|key,val| -val}
+
+times = time.count_to_hash
+comments << times #時間集計
+
+comments << [c, sile, posi, nega, neut] #円グラフソース
+
+arr.select! {|v| arr.count(v) > 1 }
 items = arr.count_to_hash
-comments << items.sort_by{|key,val| -val}
+comments << items.sort_by{|key,val| -val} #よく見るサイト
 
 p comments
 
 content_type :json
 @data = comments.to_json
+
+
 
 end

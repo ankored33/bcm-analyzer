@@ -173,6 +173,4 @@ p comments
 content_type :json
 @data = comments.to_json
 
-
-
 end

@@ -1,3 +1,5 @@
+
+
 //入力したidでjson取得####################################################
 
 
@@ -83,15 +85,22 @@ myChart = new Chart(ctx, {
 //よく見るサイト####################################################
 
 function favoriteList (favorite, hatenaId) {
+  var f = 0;
   $('#favorite_site').append(''+
-    '<div>id:' + hatenaId +'がよくブックマークをつけるサイト</div>'
+    '<div>id:' + hatenaId +'がよくブックマークをつけるサイト</div>' +
+    '<ul>'
   );
   favorite.forEach(function(line){
     $('#favorite_site').append(''+
-      '<div><a href="'+ line[0] + '">' + line[0] + '</a>　　' + line[1] + '</div>'
+      '<li><a href="'+ line[0] + '" target="_blank">' + line[0] + '</a>　　' + line[1] + '</li>'
     );
+    f += line[1];
   });
-  
+  var otherSite = 100-f
+  $('#favorite_site').append(''+
+    '<li>その他　　' + otherSite +
+    '</ul>'    
+  );  
 }
 
 

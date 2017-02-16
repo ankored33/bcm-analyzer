@@ -156,6 +156,10 @@ words = ls.count_to_hash
 comments <<  words.sort_by{|key,val| -val}
 
 times = time.count_to_hash
+for num in 0..23 do
+  p "#{num}時のブクマ==#{times[num]}"
+  times[num] = 0 if times[num] == 0
+end
 comments << times #時間集計
 
 comments << [c, sile, posi, nega, neut] #円グラフソース

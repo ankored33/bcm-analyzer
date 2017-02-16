@@ -15,8 +15,14 @@
 }
 
 
-#pie_graph {
+.graph1 {
   height:300px;
-  width:300px;  
+  width:300px;
+  margin:auto;
+}
+
+.graph2 {
+  height:300px;
+  width:600px;
   margin:auto;
 }

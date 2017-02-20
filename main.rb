@@ -130,7 +130,7 @@ while param < 100 do
       parsed.parse(cmt) do |n|
         a = n.feature.split(',')[0]
         b = n.surface
-        next if b == "" || a =="記号" || a =="助詞" || a =="助動詞"|| a =="動詞"
+        next if b == "" || a =="記号" || a =="助詞" || a =="助動詞"
         ls << b
         p a + ", " + b
       end
@@ -153,16 +153,16 @@ end
 
 ls.select! {|v| ls.count(v) > 1 }
 words = ls.count_to_hash
-comments <<  words.sort_by{|key,val| -val}
+comments <<  words.sort_by{|key,val| -val} #形態素解析結果と数
 
 times = time.count_to_hash
 for num in 0..23 do
   p "#{num}時のブクマ==#{times[num]}"
   times[num] = 0 if times[num] == 0
 end
-comments << times #時間集計
+comments << times #時間帯
 
-comments << [c, sile, posi, nega, neut] #円グラフソース
+comments << [c, sile, posi, nega, neut] #コメント傾向
 
 arr.select! {|v| arr.count(v) > 1 }
 items = arr.count_to_hash

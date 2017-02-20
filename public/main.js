@@ -26,11 +26,13 @@ $(function(){
           pieGraphSource = source[source.length - 2];
           lineGraphSource = source[source.length - 3]
           var favorite = source[source.length - 1];
+          var words = source[source.length - 4];
           console.log(pieGraphSource);
           pieGraph(pieGraphSource);
           console.log(lineGraphSource);
           lineGraph(lineGraphSource);
           favoriteList(favorite, hatenaId);
+          displayWords (words);
         });
       },
       error: function() {
@@ -147,4 +149,10 @@ myChartB = new Chart(ctxB, {
   data: dataB,
 });
 
+}
+
+
+//形態素解析結果###################################################
+function displayWords (w) {
+  $('#used_words').append(w);
 }
